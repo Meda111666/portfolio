@@ -1,0 +1,13 @@
+📸 Ovde treba da staviš svoju sliku!
+
+Lokacija: /src/assets/profile.jpg
+
+Koraci:
+1. Izaberi svoju fotografiju
+2. Preimenuj je u "profile.jpg" 
+3. Kopiraj u folder: src/assets/
+4. Preporučena veličina: 512x512px ili kvadratna slika
+
+Slika će automatski biti prikazana u sekciji "O meni" sa plavim okvirom i shadow efektom.
+
+Ako ne postaviš sliku, prikazaće se inicijali "MJ" kao placeholder.

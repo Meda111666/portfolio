@@ -1,46 +1,30 @@
-import {
-  FaHtml5,
-  FaCss3Alt,
-  FaBootstrap,
-  FaJs,
-  FaReact,
-  FaPhp,
-  FaNodeJs,
-  FaWordpress,
-} from "react-icons/fa";
-import { SiTailwindcss, SiSass } from "react-icons/si";
-import { motion } from "framer-motion";
+
+const skills = [
+  { name: "React", level: 90 },
+  { name: "Node.js & Express", level: 85 },
+  { name: "JavaScript", level: 88 },
+  { name: "Tailwind CSS", level: 92 },
+  { name: "PHP & WordPress", level: 80 },
+  { name: "MongoDB & MySQL", level: 75 },
+];
+
+const technologies = [
+  { name: "HTML", icon: <FaHtml5 />, color: "text-orange-500" },
+  { name: "CSS", icon: <FaCss3Alt />, color: "text-blue-500" },
+  { name: "SCSS", icon: <SiSass />, color: "text-pink-500" },
+  { name: "TailwindCSS", icon: <SiTailwindcss />, color: "text-cyan-400" },
+  { name: "Bootstrap", icon: <FaBootstrap />, color: "text-purple-500" },
+  { name: "JavaScript", icon: <FaJs />, color: "text-yellow-400" },
+  { name: "React", icon: <FaReact />, color: "text-cyan-400" },
+  { name: "PHP", icon: <FaPhp />, color: "text-indigo-400" },
+  { name: "Node.js", icon: <FaNodeJs />, color: "text-green-500" },
+  { name: "WordPress", icon: <FaWordpress />, color: "text-blue-400" },
+];
 
 const About = () => {
-  const technologies = [
-    { name: "HTML", icon: <FaHtml5 />, color: "text-orange-500" },
-    { name: "CSS", icon: <FaCss3Alt />, color: "text-blue-500" },
-    { name: "SCSS", icon: <SiSass />, color: "text-pink-500" },
-    { name: "TailwindCSS", icon: <SiTailwindcss />, color: "text-cyan-400" },
-    { name: "Bootstrap", icon: <FaBootstrap />, color: "text-purple-500" },
-    { name: "JavaScript", icon: <FaJs />, color: "text-yellow-400" },
-    { name: "React", icon: <FaReact />, color: "text-cyan-400" },
-    { name: "PHP", icon: <FaPhp />, color: "text-indigo-400" },
-    { name: "Node.js", icon: <FaNodeJs />, color: "text-green-500" },
-    { name: "WordPress", icon: <FaWordpress />, color: "text-blue-400" },
-  ];
-
   return (
-    <section id="about" className="py-20 px-4 relative overflow-hidden">
-      {/* Pozadinska slika sa gradijentom */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage:
-            'url("https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070")',
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
-        <div className="absolute inset-0 bg-slate-800/85"></div>
-      </div>
-
+    <section className="relative py-20 px-4 overflow-hidden">
+      <div className="absolute inset-0 bg-slate-800/85"></div>
       <div className="max-w-5xl mx-auto relative z-10">
         <motion.h2
           className="text-3xl font-bold mb-12 text-center text-gray-100"
@@ -107,14 +91,7 @@ const About = () => {
             Moje Vještine:
           </motion.h3>
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {[
-              { name: "React & Next.js", level: 90, color: "blue" },
-              { name: "Node.js & Express", level: 85, color: "green" },
-              { name: "JavaScript/TypeScript", level: 88, color: "yellow" },
-              { name: "Tailwind CSS", level: 92, color: "cyan" },
-              { name: "PHP & WordPress", level: 80, color: "purple" },
-              { name: "MongoDB & MySQL", level: 75, color: "emerald" },
-            ].map((skill, index) => (
+            {skills.map((skill, index) => (
               <motion.div
                 key={index}
                 className="bg-slate-900/50 p-4 rounded-lg border border-slate-700"
@@ -131,9 +108,9 @@ const About = () => {
                     {skill.level}%
                   </span>
                 </div>
-                <div className="w-full bg-slate-700 rounded-full h-3 overflow-hidden">
+                <div className="w-full bg-slate-700 rounded-full h-3 overflow-hidden relative">
                   <motion.div
-                    className={`h-full bg-gradient-to-r from-${skill.color}-600 to-${skill.color}-400 rounded-full`}
+                    className={`h-full rounded-full ${getProgressColor(skill.level)}`}
                     initial={{ width: 0 }}
                     whileInView={{ width: `${skill.level}%` }}
                     viewport={{ once: true }}
@@ -142,7 +119,19 @@ const About = () => {
                       delay: index * 0.1 + 0.3,
                       ease: "easeOut",
                     }}
-                  />
+                  >
+                    {/* Sjaj animacija */}
+                    <motion.div
+                      className="absolute top-0 left-0 h-full w-full rounded-full pointer-events-none"
+                      style={{
+                        background:
+                          "linear-gradient(90deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 60%, rgba(255,255,255,0) 100%)",
+                      }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: [0, 0.7, 0] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    ></motion.div>
+                  </motion.div>
                 </div>
               </motion.div>
             ))}
@@ -195,3 +184,53 @@ const About = () => {
 };
 
 export default About;
+import {
+  FaHtml5,
+  FaCss3Alt,
+  FaBootstrap,
+  FaJs,
+  FaReact,
+  FaPhp,
+  FaNodeJs,
+  FaWordpress,
+} from "react-icons/fa";
+import { SiTailwindcss, SiSass } from "react-icons/si";
+import { motion } from "framer-motion";
+
+
+// Funkcija za automatski izbor boje progress bara na osnovu procenta
+function getProgressColor(level) {
+  if (level < 60) return "bg-gradient-to-r from-red-600 to-red-400";
+  if (level < 80) return "bg-gradient-to-r from-yellow-500 to-yellow-300";
+  return "bg-gradient-to-r from-green-600 to-green-400";
+}
+
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+                          {technologies.map((tech, index) => (
+                            <motion.div
+                              key={index}
+                              className="flex flex-col items-center justify-center p-4 bg-slate-900/50 rounded-lg border border-slate-700 hover:border-blue-500 transition-all group"
+                              initial={{ opacity: 0, y: 50 }}
+                              whileInView={{ opacity: 1, y: 0 }}
+                              viewport={{ once: true }}
+                              transition={{ duration: 0.5, delay: index * 0.1 }}
+                              whileHover={{ scale: 1.1, y: -5 }}
+                            >
+                              <motion.div
+                                className={`text-5xl mb-2 ${tech.color}`}
+                                animate={{
+                                  rotate: [0, 5, -5, 0],
+                                }}
+                                transition={{
+                                  duration: 2,
+                                  repeat: Infinity,
+                                  delay: index * 0.2,
+                                }}
+                              >
+                                {tech.icon}
+                              </motion.div>
+                              <span className="text-sm text-gray-300">{tech.name}</span>
+                            </motion.div>
+                          ))}
+                        </div>
+

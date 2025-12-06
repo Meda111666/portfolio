@@ -1,8 +1,43 @@
-import { useState } from "react";
+// Helper funkcija za uklanjanje HTML tagova
+function stripHtml(html) {
+  const tmp = document.createElement('DIV');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+}
+
+import { useState, useEffect } from "react";
+import { API_URL } from "../config";
 import { motion } from "framer-motion";
 import { FaCode, FaBriefcase, FaBullhorn } from "react-icons/fa";
 
 const Blog = () => {
+  // Funkcija za boje kartica
+  const getColorClasses = (color) => {
+    const colors = {
+      blue: {
+        border: "border-blue-500",
+        bg: "bg-blue-600/20",
+        text: "text-blue-400",
+        hover: "hover:border-blue-400",
+        button: "bg-blue-600 hover:bg-blue-500",
+      },
+      green: {
+        border: "border-green-500",
+        bg: "bg-green-600/20",
+        text: "text-green-400",
+        hover: "hover:border-green-400",
+        button: "bg-green-600 hover:bg-green-500",
+      },
+      purple: {
+        border: "border-purple-500",
+        bg: "bg-purple-600/20",
+        text: "text-purple-400",
+        hover: "hover:border-purple-400",
+        button: "bg-purple-600 hover:bg-purple-500",
+      },
+    };
+    return colors[color] || colors.blue;
+  };
   const blogPosts = [
     {
       id: 1,
@@ -110,284 +145,163 @@ const Blog = () => {
 
   const [selectedPost, setSelectedPost] = useState(null);
 
-  const getColorClasses = (color) => {
-    const colors = {
-      blue: {
-        border: "border-blue-500",
-        bg: "bg-blue-600/20",
-        text: "text-blue-400",
-        hover: "hover:border-blue-400",
-        button: "bg-blue-600 hover:bg-blue-500",
-      },
-      green: {
-        border: "border-green-500",
-        bg: "bg-green-600/20",
-        text: "text-green-400",
-        hover: "hover:border-green-400",
-        button: "bg-green-600 hover:bg-green-500",
-      },
-      purple: {
-        border: "border-purple-500",
-        bg: "bg-purple-600/20",
-        text: "text-purple-400",
-        hover: "hover:border-purple-400",
-        button: "bg-purple-600 hover:bg-purple-500",
-      },
-    };
-    return colors[color] || colors.blue;
-  };
-
   return (
-    <section id="blog" className="py-20 px-4 relative overflow-hidden">
-      {/* Pozadinska slika sa gradijentom */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage:
-            'url("https://images.unsplash.com/photo-1432821596592-e2c18b78144f?q=80&w=2070")',
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
-        <div className="absolute inset-0 bg-slate-900/90"></div>
-      </div>
-
-      <div className="max-w-6xl mx-auto relative z-10">
-        <motion.h2
-          className="text-3xl font-bold text-center mb-4 text-gray-100"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          Blog
-        </motion.h2>
-
-        <motion.p
-          className="text-center text-gray-300 mb-12 text-lg"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          Članci o programiranju, biznisu i digitalnom marketingu
-        </motion.p>
-
-        {!selectedPost ? (
-          // Lista članaka
-          <div className="grid md:grid-cols-3 gap-8">
-            {blogPosts.map((post, index) => {
-              const colorClasses = getColorClasses(post.color);
-              return (
-                <motion.div
-                  key={post.id}
-                  className={`bg-slate-800/50 backdrop-blur-sm rounded-lg border-2 ${colorClasses.border} ${colorClasses.hover} transition-all overflow-hidden group cursor-pointer h-[500px] flex flex-col`}
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.2 }}
-                  whileHover={{ scale: 1.03, y: -5 }}
-                  onClick={() => setSelectedPost(post)}
-                >
-                  {/* Pozadinska slika */}
-                  <div
-                    className="relative h-48 overflow-hidden"
-                    style={{
-                      backgroundImage: `url("${post.image}")`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                  >
-                    <div
-                      className={`absolute inset-0 ${colorClasses.bg} flex justify-center items-center`}
+    <>
+      <section className="py-16 px-4 md:px-10 lg:px-20 bg-slate-950/90 min-h-screen">
+        <div className="max-w-7xl mx-auto">
+          {!selectedPost ? (
+            <>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                {blogPosts.slice(0, 6).map((post, index) => {
+                  const colorClasses = getColorClasses(post.color);
+                  return (
+                    <motion.div
+                      key={post.id}
+                      className={`bg-slate-900/70 rounded-xl border-2 ${colorClasses.border} ${colorClasses.hover} shadow-lg transition-all overflow-hidden group cursor-pointer flex flex-col h-[520px]`}
+                      initial={{ opacity: 0, y: 50 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: index * 0.2 }}
+                      whileHover={{ scale: 1.04, y: -5 }}
+                      onClick={() => setSelectedPost(post)}
                     >
-                      <motion.div
-                        className={`text-6xl ${colorClasses.text}`}
-                        animate={{ rotate: [0, 5, -5, 0] }}
-                        transition={{
-                          duration: 3,
-                          repeat: Infinity,
-                          delay: index * 0.5,
-                        }}
-                      >
-                        {post.icon}
-                      </motion.div>
-                    </div>
-                  </div>
-
-                  <div className="p-6 flex flex-col flex-grow">
-                    <div className="flex justify-between items-center mb-3 text-sm text-gray-400">
-                      <span>📅 {post.date}</span>
-                      <span>⏱️ {post.readTime}</span>
-                    </div>
-
-                    <h3 className="text-xl font-bold mb-3 text-gray-100 group-hover:text-blue-300 transition">
-                      {post.title}
-                    </h3>
-
-                    <p className="text-gray-300 mb-4 leading-relaxed flex-grow">
-                      {post.excerpt}
-                    </p>
-
-                    <motion.button
-                      className={`${colorClasses.button} text-white px-4 py-2 rounded-lg font-semibold transition w-full mt-auto`}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Pročitaj više →
-                    </motion.button>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        ) : (
-          // Prikaz pojedinačnog članka
-          <motion.div
-            className="bg-slate-800/70 backdrop-blur-sm rounded-lg border-2 border-blue-500 overflow-hidden max-w-4xl mx-auto"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4 }}
-          >
-            {/* Hero slika */}
-            <motion.div
-              className="relative h-64 md:h-80 overflow-hidden"
-              style={{
-                backgroundImage: `url("${selectedPost.image}")`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-              initial={{ scale: 1.2, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-900/50 to-slate-900"></div>
-              <motion.div
-                className="absolute bottom-6 left-6 right-6"
-                initial={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.3, duration: 0.6 }}
-              >
-                <motion.div
-                  className={`inline-flex items-center justify-center w-16 h-16 rounded-full ${
-                    getColorClasses(selectedPost.color).bg
-                  } mb-3`}
-                  initial={{ scale: 0, rotate: -180 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ delay: 0.4, type: "spring", stiffness: 200 }}
-                >
-                  <div
-                    className={`text-3xl ${
-                      getColorClasses(selectedPost.color).text
-                    }`}
-                  >
-                    {selectedPost.icon}
-                  </div>
-                </motion.div>
-                <motion.h2
-                  className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg"
-                  initial={{ x: -30, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.5, duration: 0.6 }}
-                >
-                  {selectedPost.title}
-                </motion.h2>
-              </motion.div>
-            </motion.div>
-
-            <div className="p-8">
-              <motion.button
-                onClick={() => setSelectedPost(null)}
-                className="mb-6 text-blue-400 hover:text-blue-300 transition flex items-center gap-2 group"
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.1 }}
-                whileHover={{ x: -5 }}
-              >
-                <motion.span
-                  animate={{ x: [-2, 2, -2] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                >
-                  ←
-                </motion.span>
-                <span className="group-hover:underline">Nazad na blog</span>
-              </motion.button>
-
-              <motion.div
-                className="flex justify-between items-center mb-6 text-sm text-gray-400 pb-4 border-b border-gray-700"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <motion.span
+                      <div className="relative h-56 overflow-hidden">
+                        <img
+                          src={post.image}
+                          alt={post.title}
+                          className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                        />
+                        <div className="absolute top-2 left-2 flex items-center gap-2 bg-slate-800/80 px-3 py-1 rounded-full shadow text-xs">
+                          <span className="text-blue-300 font-semibold">{post.author}</span>
+                        </div>
+                        <div className="absolute bottom-2 right-2 bg-slate-800/80 px-2 py-1 rounded text-xs text-gray-300">
+                          {post.date}
+                        </div>
+                      </div>
+                      <div className="p-5 flex flex-col flex-grow">
+                        <h3 className="text-lg font-bold mb-2 text-gray-100 group-hover:text-blue-300 transition">
+                          {post.title}
+                        </h3>
+                        <div className="text-gray-300 mb-4 leading-relaxed flex-grow">
+                          {post.excerpt}
+                        </div>
+                        <div className="flex justify-end mt-auto">
+                          <button className={`px-4 py-2 rounded ${colorClasses.button} text-white font-semibold shadow hover:shadow-lg transition`}>
+                            Pročitaj više
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </>
+          ) : (
+            <motion.div className="bg-slate-800/70 backdrop-blur-sm rounded-lg border-2 border-blue-500 overflow-hidden max-w-4xl mx-auto" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4 }}>
+              <div className="p-8">
+                <motion.button
+                  onClick={() => setSelectedPost(null)}
+                  className="mb-6 text-blue-400 hover:text-blue-300 transition flex items-center gap-2 group"
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.3 }}
+                  transition={{ delay: 0.1 }}
+                  whileHover={{ x: -5 }}
                 >
-                  📅 {selectedPost.date}
-                </motion.span>
-                <motion.span
-                  initial={{ x: 20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  ⏱️ {selectedPost.readTime}
-                </motion.span>
-              </motion.div>
-
-              <div className="space-y-8">
-                {selectedPost.content.map((section, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.1 * index }}
-                    className="relative pl-6 border-l-4 border-blue-500/30 hover:border-blue-500 transition-colors duration-300"
+                  <motion.span
+                    animate={{ x: [-2, 2, -2] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
                   >
-                    <motion.h3
-                      className="text-2xl font-semibold mb-3 text-blue-300"
-                      initial={{ x: -10, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      transition={{ delay: 0.15 * index + 0.2 }}
-                    >
-                      {section.heading}
-                    </motion.h3>
-                    <motion.p
-                      className="text-gray-300 leading-relaxed whitespace-pre-line"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.15 * index + 0.3, duration: 0.6 }}
-                    >
-                      {section.text}
-                    </motion.p>
-                  </motion.div>
-                ))}
-              </div>
+                    ←
+                  </motion.span>
+                  <span className="group-hover:underline">Nazad na blog</span>
+                </motion.button>
 
-              <motion.button
-                onClick={() => setSelectedPost(null)}
-                className="mt-8 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white px-6 py-3 rounded-lg font-semibold transition w-full shadow-lg hover:shadow-blue-500/50 group flex items-center justify-center gap-2"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                whileHover={{ scale: 1.02, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <motion.span
-                  animate={{ x: [-2, 2, -2] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
+                <motion.div
+                  className="flex justify-between items-center mb-6 text-sm text-gray-400 pb-4 border-b border-gray-700"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
                 >
-                  ←
-                </motion.span>
-                Nazad na blog
-              </motion.button>
-            </div>
-          </motion.div>
-        )}
-      </div>
-    </section>
+                  <motion.span
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    📅 {selectedPost.date}
+                  </motion.span>
+                  <motion.span
+                    initial={{ x: 20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    ⏱️ {selectedPost.readTime}
+                  </motion.span>
+                </motion.div>
+
+                <div className="space-y-8">
+                  {selectedPost.wp ? (
+                    <div className="relative pl-6 border-l-4 border-blue-500/30 hover:border-blue-500 transition-colors duration-300">
+                      <h3 className="text-2xl font-semibold mb-3 text-blue-300">Sadržaj</h3>
+                      {selectedPost.content[0].text && selectedPost.content[0].text.includes('<p>') ? (
+                        <div className="text-gray-300 leading-relaxed whitespace-pre-line" dangerouslySetInnerHTML={{ __html: selectedPost.content[0].text }} />
+                      ) : (
+                        <div className="text-gray-300 leading-relaxed whitespace-pre-line">{stripHtml(selectedPost.content[0].text)}</div>
+                      )}
+                    </div>
+                  ) : (
+                    selectedPost.content.map((section, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.1 * index }}
+                        className="relative pl-6 border-l-4 border-blue-500/30 hover:border-blue-500 transition-colors duration-300"
+                      >
+                        <motion.h3
+                          className="text-2xl font-semibold mb-3 text-blue-300"
+                          initial={{ x: -10, opacity: 0 }}
+                          animate={{ x: 0, opacity: 1 }}
+                          transition={{ delay: 0.15 * index + 0.2 }}
+                        >
+                          {section.heading}
+                        </motion.h3>
+                        <motion.p
+                          className="text-gray-300 leading-relaxed whitespace-pre-line"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 0.15 * index + 0.3, duration: 0.6 }}
+                        >
+                          {section.text}
+                        </motion.p>
+                      </motion.div>
+                    ))
+                  )}
+                </div>
+
+                <motion.button
+                  onClick={() => setSelectedPost(null)}
+                  className="mt-8 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white px-6 py-3 rounded-lg font-semibold transition w-full shadow-lg hover:shadow-blue-500/50 group flex items-center justify-center gap-2"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <motion.span
+                    animate={{ x: [-2, 2, -2] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    ←
+                  </motion.span>
+                  Nazad na blog
+                </motion.button>
+              </div>
+            </motion.div>
+          )}
+        </div>
+      </section>
+    </>
   );
-};
+}
 
 export default Blog;

@@ -1,5 +1,6 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: Meda111666/portfolio
   branch: main
 
 media_folder: "public/uploads"
